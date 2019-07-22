@@ -21,6 +21,9 @@ public class Player : MonoBehaviour
     private float _canFire = -1f;
     [SerializeField]
     private int _lives = 3;
+    [SerializeField]
+    private int _score = 0;
+    private UIManager _UIManager;
     private SpawnManager _spawnManager;
     [SerializeField]
     private bool _tripleShotActive = false;
@@ -36,17 +39,25 @@ public class Player : MonoBehaviour
     
 
 
+
     // Start is called before the first frame update
     void Start()
     {
         //take current position = new position (0,0,0)
         transform.position = new Vector3(0, -5, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _UIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
         if (_spawnManager == null)
         {
-            Debug.LogError("Spawn_Manager is null");
+            Debug.LogError("Spawn_Manager is NULL");
         }
+
+        if (_UIManager == null)
+        {
+            Debug.LogError("UIManager is NULL");
+        }
+
 
 
     }
@@ -131,6 +142,8 @@ public class Player : MonoBehaviour
         {
             _lives -= 1;
 
+            _UIManager.UpdateLives(_lives);
+
             if (_lives < 1)
             {
                 //communicate with spawn manager
@@ -197,7 +210,13 @@ public class Player : MonoBehaviour
 
     }
 
-    
-
+    //method to add 10 to score
+    //communicate with UI to update score
+    public void AddScore(int points)
+    {
+        _score += points;
+        _UIManager.UpdateScore(_score);
+        
+    }
 
 }
