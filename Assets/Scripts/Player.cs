@@ -36,8 +36,12 @@ public class Player : MonoBehaviour
     // variable ref for shield visualiser
     [SerializeField]
     private GameObject _shieldVisualiser;
+    [SerializeField]
+    private GameObject _rightEngine, _leftEngine;
+    [SerializeField]
+    private AudioClip _laserSoundClip;
     
-
+    private AudioSource _audioSource;
 
 
     // Start is called before the first frame update
@@ -47,6 +51,8 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, -5, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _UIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
+
 
         if (_spawnManager == null)
         {
@@ -57,6 +63,16 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("UIManager is NULL");
         }
+
+        if (_audioSource == null)
+        {
+            Debug.LogError("AudioSource on the player is NULL");
+        }
+        else
+        {
+            _audioSource.clip = _laserSoundClip;
+        }
+
 
 
 
@@ -125,6 +141,11 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.0f, 0), Quaternion.identity);
         }
+
+        // play laser audio clip
+        _audioSource.Play();
+
+
     }
 
     public void Damage()
@@ -141,6 +162,21 @@ public class Player : MonoBehaviour
         else
         {
             _lives -= 1;
+
+            // if lives = 2 enable right engine
+            // if lives = 1 enable left engine
+            if (_lives ==2)
+            {
+                _leftEngine.SetActive(true);
+            }
+
+            if (_lives == 1)
+            {
+                _rightEngine.SetActive(true);
+            }
+
+
+
 
             _UIManager.UpdateLives(_lives);
 
